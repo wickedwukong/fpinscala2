@@ -1,0 +1,28 @@
+1. What is Monoids?
+
+String concatenation
+
+Identity element: ""
+The operation is associative: (r+s+t) = ((r + s) + t) = (r + (s + t)).
+
+Integer addition
+
+Identity element: 0
+The operation is associative: (r+s+t) = ((r + s) + t) = (r + (s + t)).
+
+Multiplication
+
+Identity element: 1
+The operation is associative: (r * s * t) = ((r * s) * t) = (r * (s * t)).
+
+Boolean operator &&
+
+Identity element: true
+The operation is associative: (r && s && t) = ((r && s) && t) = (r && (s && t))
+
+Boolean operator ||
+
+Identity element: false
+The operation is associative: (r || s || t) = ((r || s) || t) = (r || (s || t))
+
+
