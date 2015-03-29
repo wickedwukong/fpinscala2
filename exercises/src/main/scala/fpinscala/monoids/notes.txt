@@ -25,4 +25,32 @@ Boolean operator ||
 Identity element: false
 The operation is associative: (r || s || t) = ((r || s) || t) = (r || (s || t))
 
+The laws of associativity and iden- tity are collectively called the monoid laws. A monoid consists of the following:
+1 Some type A
+2 An associative binary operation, op, that takes two values of type A and com-
+bines them into one: op(op(x,y), z) == op(x, op(y,z)) for any choice of x: A,
+y:A,z:A
+3 A value, zero: A, that is an identity for that operation: op(x, zero) == x and
+op(zero, x) == x for any x: A
 
+2. In what ways are Monoids useful?
+
+In two ways: they facilitate parallel computation by giving us the freedom to break our problem into chunks that can be computed in parallel; and they can be composed to assemble complex calculations from simpler pieces.
+
+3. Expressed in Scala:
+
+trait Monoid[A] {
+    def op(a1: A, a2: A): A
+    val zero: A
+}
+
+val stringMonoid = new Monoid[String] { 
+    def op(a1: String, a2: String) = a1 + a2 
+    val zero = ""
+}
+
+List concatenation also forms a monoid:
+def listMonoid[A] = new Monoid[List[A]] {
+    def op(a1: List[A], a2: List[A]) = a1 ++ a2 
+    val zero = Nil
+}
