@@ -27,4 +27,22 @@ class MonoidSpec extends FlatSpec{
        booleanOr.op(booleanOr.zero, false) should be(false)
        booleanOr.op(false, booleanOr.zero) should be(false)
     }
+
+  "optionMonoid" should "follow monoid associative laws" in {
+    assert(optionMonoid.op(Some(1), Some(2)) == Some(1))
+    assert(optionMonoid.op(None, None) == None)
+    assert(optionMonoid.op(Some(1), None) == Some(1))
+
+    assert(optionMonoid.op(Some(1), None) == optionMonoid.op(None, Some(1)))
+    assert(optionMonoid.op(optionMonoid.op(Some(1), Some(2)), Some(3)) == optionMonoid.op(Some(1), optionMonoid.op(Some(2), Some(3))))
+    assert(optionMonoid.op(optionMonoid.op(None, Some(1)), Some(2)) == optionMonoid.op(None, optionMonoid.op(Some(1), Some(2))))
+  }
+
+  "optionMonoid" should "have a zero following monoid identity laws" in {
+    optionMonoid.op(optionMonoid.zero, Some(1)) should be(Some(1))
+    optionMonoid.op(Some(1), optionMonoid.zero) should be(Some(1))
+    optionMonoid.op(optionMonoid.zero, None) should be(None)
+    optionMonoid.op(None, optionMonoid.zero) should be(None)
+  }
+
 }
