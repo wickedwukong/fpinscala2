@@ -25,7 +25,7 @@ Boolean operator ||
 Identity element: false
 The operation is associative: (r || s || t) = ((r || s) || t) = (r || (s || t))
 
-The laws of associativity and iden- tity are collectively called the monoid laws. A monoid consists of the following:
+The laws of associativity and identity are collectively called the monoid laws. A monoid consists of the following:
 1 Some type A
 2 An associative binary operation, op, that takes two values of type A and com-
 bines them into one: op(op(x,y), z) == op(x, op(y,z)) for any choice of x: A,
