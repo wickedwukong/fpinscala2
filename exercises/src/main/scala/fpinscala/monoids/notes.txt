@@ -54,3 +54,22 @@ def listMonoid[A] = new Monoid[List[A]] {
     def op(a1: List[A], a2: List[A]) = a1 ++ a2 
     val zero = Nil
 }
+
+
+Folding lists with monoids
+
+def foldRight[B](z: B)(f: (A, B) => B): B def foldLeft[B](z: B)(f: (B, A) => B): B
+What happens when A and B are the same type?
+
+def foldRight(z: A)(f: (A, A) => A): A
+def foldLeft(z: A)(f: (A, A) => A): A
+
+scala> val words = List("Hic", "Est", "Index")
+words: List[String] = List(Hic, Est, Index)
+scala> val s = words.foldRight(stringMonoid.zero)(stringMonoid.op)
+s: String = "HicEstIndex"
+scala> val t = words.foldLeft(stringMonoid.zero)(stringMonoid.op)
+t: String = "HicEstIndex"
+
+We can write a general function concatenate that folds a list with a monoid:
+def concatenate[A](as: List[A], m: Monoid[A]): A = as.foldLeft(m.zero)(m.op)
