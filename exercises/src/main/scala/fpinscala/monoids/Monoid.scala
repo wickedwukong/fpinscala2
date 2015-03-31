@@ -55,7 +55,7 @@ object Monoid {
   //
   def endoMonoid[A]: Monoid[A => A] = new Monoid[(A) => A] {
 
-    override def op(a1: (A) => A, a2: (A) => A): (A) => A =  a => a2(a1(a))
+    override def op(a1: (A) => A, a2: (A) => A): (A) => A =  a2 compose(a1)
 
     override def zero: (A) => A = a => a
   }

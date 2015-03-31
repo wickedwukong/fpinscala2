@@ -52,15 +52,16 @@ class MonoidSpec extends FlatSpec{
 
     endoMonoid.op(f1, f2)(100) should be(2)
     endoMonoid.op(f1, f2)(100) should be(f2(2))
-//    endoMonoid.op(f2, f1) should be(f1(1))
 
     assert(endoMonoid.op(endoMonoid.op(f1, f2), f3)(1000) == endoMonoid.op(f1, endoMonoid.op(f2, f3))(1000))
   }
 
-//  "intAddition" should "have a zero following monoid identity laws" in {
-//    assert(intAddition.op(intAddition.zero, 3) == 3)
-//    assert(intAddition.op(3, intAddition.zero) == 3)
-//  }
+  "endoMonoid" should "have a zero following monoid identity laws" in {
+    val f1: Int => Int = i => 2000
+
+    assert(endoMonoid.op(endoMonoid.zero, f1)(100) == f1(100))
+    assert(endoMonoid.op(f1, endoMonoid.zero)(999) == f1(999))
+  }
 
 
 }
