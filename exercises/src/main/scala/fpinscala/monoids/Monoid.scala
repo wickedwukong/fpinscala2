@@ -25,6 +25,12 @@ object Monoid {
     val zero = Nil
   }
 
+  def dual[A](monoid: Monoid[A]): Monoid[A] = new Monoid[A] {
+    override def op(a1: A, a2: A): A = monoid.op(a2, a1)
+
+    override def zero: A = monoid.zero
+  }
+
   val intAddition: Monoid[Int] = new Monoid[Int] {
     override def op(a1: Int, a2: Int): Int = a1 + a2
 
@@ -82,11 +88,10 @@ object Monoid {
       }
     }
 
-    def foldRight[A, B](as: List[A])(z: B)(f: (A, B) => B): B =
-      foldMap(as, endoMonoid[B])(f.curried)(z)
+    def foldRight[A, B](as: List[A])(z: B)(f: (A, B) => B): B = foldMap(as, endoMonoid[B])(f.curried)(z)
 
-  //  def foldLeft[A, B](as: List[A])(z: B)(f: (B, A) => B): B =
-  //    sys.error("todo")
+    def foldLeft[A, B](as: List[A])(z: B)(f: (B, A) => B): B = foldMap(as, dual(endoMonoid[B]))(a => b => f(b, a))(z)
+
   //
   //  def foldMapV[A, B](as: IndexedSeq[A], m: Monoid[B])(f: A => B): B =
   //    sys.error("todo")
