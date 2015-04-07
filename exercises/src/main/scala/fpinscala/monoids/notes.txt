@@ -2,6 +2,8 @@
 
 String concatenation
 
+(1 + 2 + 3 + 4
+
 Identity element: ""
 The operation is associative: (r+s+t) = ((r + s) + t) = (r + (s + t)).
 
@@ -73,3 +75,15 @@ t: String = "HicEstIndex"
 
 We can write a general function concatenate that folds a list with a monoid:
 def concatenate[A](as: List[A], m: Monoid[A]): A = as.foldLeft(m.zero)(m.op)
+
+Associativity and parallelism
+
+Folding to the right
+
+op(a, op(b, op(c, d)))
+
+Folding to the left would look like this:
+        op(op(op(a, b), c), d)
+
+But a balanced fold looks like this:
+        op(op(a, b), op(c, d))
