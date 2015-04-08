@@ -140,8 +140,24 @@ object Monoid {
   def functionMonoid[A, B](B: Monoid[B]): Monoid[A => B] =
     sys.error("todo")
 
-  def mapMergeMonoid[K, V](V: Monoid[V]): Monoid[Map[K, V]] =
-    sys.error("todo")
+  def mapMergeMonoid[K, V](V: Monoid[V]): Monoid[Map[K, V]] = new Monoid[Map[K, V]] {
+    override def op(a1: Map[K, V], a2: Map[K, V]): Map[K, V] = {
+      (a1.keySet ++ a2.keySet).foldLeft(zero){
+        (acc, key) => acc.updated(key, V.op(a1.getOrElse(key, V.zero), a2.getOrElse(key, V.zero)))
+      }
+    }
+
+    override def zero: Map[K, V] = Map[K, V]()
+  }
+
+  private val mergeMonoid: Monoid[Map[String, Int]] = mapMergeMonoid(intAddition)
+  private val mergeMonoid1: Monoid[Map[String, Map[String, Int]]] = mapMergeMonoid(mergeMonoid)
+
+
+  val map1: Map[String, Map[String, Int]] = Map("toby" -> Map("biologicalAge" -> 50))
+  val map2: Map[String, Map[String, Int]] = Map("toby" -> Map("psychologicalAge" -> 2))
+
+  mergeMonoid1.op(map1, map2)
 
   def bag[A](as: IndexedSeq[A]): Map[A, Int] =
     sys.error("todo")
