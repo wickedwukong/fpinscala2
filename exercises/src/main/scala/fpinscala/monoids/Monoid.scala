@@ -137,8 +137,11 @@ object Monoid {
       override def zero: (A, B) = (A.zero, B.zero)
     }
 
-  def functionMonoid[A, B](B: Monoid[B]): Monoid[A => B] =
-    sys.error("todo")
+  def functionMonoid[A, B](B: Monoid[B]): Monoid[A => B] = new Monoid[(A) => B] {
+    override def op(a1: (A) => B, a2: (A) => B): (A) => B = a => B.op(a1(a), a2(a))
+
+    override def zero: (A) => B = a => B.zero
+  }
 
   def mapMergeMonoid[K, V](V: Monoid[V]): Monoid[Map[K, V]] = new Monoid[Map[K, V]] {
     override def op(a1: Map[K, V], a2: Map[K, V]): Map[K, V] = {
