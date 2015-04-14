@@ -95,7 +95,11 @@ object Monad {
     override def unit[A](a: => A): Stream[A] = Stream(a)
   }
 
-  val listMonad: Monad[List] = ???
+  val listMonad: Monad[List] = new Monad[List] {
+    override def flatMap[A, B](ma: List[A])(f: (A) => List[B]): List[B] = ma.flatMap(f)
+
+    override def unit[A](a: => A): List[A] = List(a)
+  }
 
   def stateMonad[S] = ???
 
