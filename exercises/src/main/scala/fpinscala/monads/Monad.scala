@@ -68,7 +68,7 @@ object Monad {
   val parMonad: Monad[Par] = new Monad[Par] {
     override def flatMap[A, B](ma: Par[A])(f: (A) => Par[B]): Par[B] = {
       (e: ExecutorService) => Par.map(ma)(a => f(a)).apply(e).get()(e)
-
+        
       //or
 //      Par.flatMap(ma)(f)
     }
