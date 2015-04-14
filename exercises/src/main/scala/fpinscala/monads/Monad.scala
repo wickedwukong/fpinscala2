@@ -80,10 +80,14 @@ object Monad {
   def parserMonad[P[+ _]](p: Parsers[P]): Monad[P] = new Monad[P] {
     override def flatMap[A, B](ma: P[A])(f: (A) => P[B]): P[B] = p.flatMap(ma)(f)
 
-    override def unit[A](a: => A): P[A] = p.defaultSucceed(a)
+    override def unit[A](a: => A): P[A] = p.succeed(a)
   }
 
-  val optionMonad: Monad[Option] = ???
+  val optionMonad: Monad[Option] = new Monad[Option] {
+    override def flatMap[A, B](ma: Option[A])(f: (A) => Option[B]): Option[B] = ma.flatMap(f)
+
+    override def unit[A](a: => A): Option[A] = Some(a)
+  }
 
   val streamMonad: Monad[Stream] = ???
 
