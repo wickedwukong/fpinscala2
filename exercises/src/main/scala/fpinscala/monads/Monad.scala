@@ -50,6 +50,22 @@ trait Monad[M[_]] extends Functor[M] {
 
   def replicateM[A](n: Int, ma: M[A]): M[List[A]] = sequence(List.fill(n)(ma))
 
+  def filterM[A](ms: List[A])(f: A => M[Boolean]): M[List[A]] = {
+    val listMABool: List[M[(A, Boolean)]] = ms.map(a => (unit(a), f(a))).map{case (ma, mbool) => map2(ma, mbool)((_, _))}
+
+    val mListABool: M[List[(A, Boolean)]] = sequence(listMABool)
+
+    map(mListABool)(listABool => listABool.filter(_._2).map(_._1))
+
+    //or use foldRight and map
+//    ms.foldRight(unit(List.empty[A])){(a, mListA) =>
+//      compose(f, (b: Boolean) => if (b) map(mListA)(a :: _) else mListA)(a)}
+
+    //or use foldright and map2
+//    ms.foldRight(unit(List[A]()))((x, y) =>
+//      compose(f, (b: Boolean) => if (b) map2(unit(x), y)(_ :: _) else y)(x))
+  }
+
 
   def compose[A, B, C](f: A => M[B], g: B => M[C]): A => M[C] = a => flatMap(f(a))(g)
 
