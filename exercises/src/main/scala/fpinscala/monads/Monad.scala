@@ -129,7 +129,11 @@ object Monad {
 
 //  def stateMonad[S] = new Monad[State[]] {}
 
-  val idMonad: Monad[Id] = ???
+  val idMonad: Monad[Id] = new Monad[Id] {
+    override def flatMap[A, B](ma: Id[A])(f: (A) => Id[B]): Id[B] = ma.flatMap(f)
+
+    override def unit[A](a: => A): Id[A] = Id(a)
+  }
 
   def readerMonad[R] = ???
 }
