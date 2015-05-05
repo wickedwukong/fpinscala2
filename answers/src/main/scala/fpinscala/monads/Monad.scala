@@ -156,9 +156,10 @@ object Monad {
 
   def zipWithIndex[A](as: List[A]): List[(Int,A)] = {
     val zippedListWrappedInState: State[Int, List[(Int, A)]] = as.foldLeft(F.unit(List[(Int, A)]()))((acc, a) => acc.flatMap(listIntA => {
-      val newAcc: State[Int, List[(Int, A)]] = getState[Int].flatMap(n => setState[Int](n + 1).map(_ => {
-        (n, a) :: listIntA;
-      }))
+      val newAcc: State[Int, List[(Int, A)]] = getState[Int].flatMap(n => {
+        val map: State[Int, List[(Int, A)]] = setState[Int](n + 1).map(_ => (n, a) :: listIntA)
+        map
+      })
 
       newAcc
     }))
