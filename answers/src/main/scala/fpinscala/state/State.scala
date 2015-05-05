@@ -162,6 +162,9 @@ object RNG {
 import State._
 
 case class State[S, +A](run: S => (A, S)) {
+  def unit[S, A](a: A): State[S, A] =
+    State(s => (a, s))
+
   def map[B](f: A => B): State[S, B] =
     flatMap(a => unit(f(a)))
   def map2[B,C](sb: State[S, B])(f: (A, B) => C): State[S, C] =
@@ -173,7 +176,7 @@ case class State[S, +A](run: S => (A, S)) {
 }
 
 object State {
-  type Rand[A] = State[RNG, A]
+//  type Rand[A] = State[RNG, A]
 
   def unit[S, A](a: A): State[S, A] =
     State(s => (a, s))
@@ -205,10 +208,13 @@ object State {
   def sequenceViaFoldLeft[S,A](l: List[State[S, A]]): State[S, List[A]] =
     l.reverse.foldLeft(unit[S, List[A]](List()))((acc, f) => f.map2(acc)( _ :: _ ))
 
-  def modify[S](f: S => S): State[S, Unit] = for {
-    s <- get // Gets the current state and assigns it to `s`.
-    _ <- set(f(s)) // Sets the new state to `f` applied to `s`.
-  } yield ()
+  def modify[S](f: S => S): State[S, Unit] = get.flatMap(s => set(f(s)))
+
+
+//    for {
+//    s <- get // Gets the current state and assigns it to `s`.
+//    _ <- set(f(s)) // Sets the new state to `f` applied to `s`.
+//  } yield ()
 
   def get[S]: State[S, S] = State(s => (s, s))
 

@@ -150,5 +150,13 @@ object Reader {
 
     override def flatMap[A, B](st: Reader[R, A])(f: A => Reader[R, B]): Reader[R, B] = ???
   }
+
+  object IntStateMonad extends Monad[({type IntState[A] = State[Int, A]})#IntState] {
+    override def unit[A](a: => A): ({type IntState[A] = State[Int, A]})#IntState[A] = ???
+
+    override def flatMap[A, B](ma: ({type IntState[A] = State[Int, A]})#IntState[A])(f: (A) => ({type IntState[A] = State[Int, A]})#IntState[B]): ({type IntState[A] = State[Int, A]})#IntState[B] = ???
+  }
+
 }
+
 
