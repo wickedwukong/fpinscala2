@@ -155,9 +155,15 @@ object Monad {
   val F = stateMonad[Int]
 
   def zipWithIndex[A](as: List[A]): List[(Int,A)] = {
-    val zippedListWrappedInState: State[Int, List[(Int, A)]] = as.foldLeft(F.unit(List[(Int, A)]()))((acc, a) => acc.flatMap(listIntA => {
+    val seed: State[Int, List[(Int, A)]] = F.unit(List[(Int, A)]())
+    val zippedListWrappedInState: State[Int, List[(Int, A)]] = as.foldLeft(seed)((acc, a) => acc.flatMap(listIntA => {
+      println(s"in acc flatMap. listIntA is $listIntA")
+      println(s"in acc flatMap. a is $a")
       val newAcc: State[Int, List[(Int, A)]] = getState[Int].flatMap(n => {
-        val map: State[Int, List[(Int, A)]] = setState[Int](n + 1).map(_ => (n, a) :: listIntA)
+        println(s"in getState flatMap. n is $n")
+        val map: State[Int, List[(Int, A)]] = setState[Int](n + 1).map(_ => {
+          println(s"in setState map. n is: $n")
+          (n, a) :: listIntA})
         map
       })
 
@@ -165,13 +171,19 @@ object Monad {
     }))
 
     zippedListWrappedInState.run(0)._1.reverse
+//
+//    val left: State[Int, List[(Int, A)]] = as.foldLeft(F.unit(List[(Int, A)]()))((acc, a) => for {
+//      xs <- acc
+//      n <- getState
+//      _ <- setState(n + 1)
+//    } yield (n, a) :: xs)
+//
+//    val run: (List[(Int, A)], Int) = left.run(0)
+//
+//    run._1.reverse
+
   }
 
-  //    as.foldLeft(F.unit(List[(Int, A)]()))((acc,a) => for {
-//      xs <- acc
-//      n  <- getState
-//      _  <- setState(n + 1)
-//    } yield (n, a) :: xs).run(0)._1.reverse
 
   // The action of Reader's `flatMap` is to pass the `r` argument along to both the
   // outer Reader and also to the result of `f`, the inner Reader. Similar to how
@@ -208,4 +220,9 @@ case class Id[A](value: A) {
 object Reader {
   def ask[R]: Reader[R, R] = Reader(r => r)
 }
+  object TestStateMonad extends App {
+    import Monad._
+    private val index: List[(Int, String)] = zipWithIndex(List("a", "b", "c"))
+    print(index)
+  }
 
