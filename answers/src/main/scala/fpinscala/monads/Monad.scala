@@ -137,7 +137,7 @@ object Monad {
   // an anonymous class inline, inside parentheses, and project out its type member,
   // `lambda`:
   def stateMonad[S] = new Monad[({type lambda[x] = State[S, x]})#lambda] {
-    def unit[A](a: => A): State[S, A] = State(s => (a, s))
+    def unit[A](a: => A): State[S, A] = State(s => (a, s), name = "unitMonad")
 
     override def flatMap[A, B](st: State[S, A])(f: A => State[S, B]): State[S, B] =
       st flatMap f
@@ -149,20 +149,16 @@ object Monad {
     override def flatMap[A, B](ida: Id[A])(f: A => Id[B]): Id[B] = ida flatMap f
   }
 
-  def getState[S]: State[S,S] = State(s => (s,s))
-  def setState[S](s: S): State[S,Unit] = State(_ => ((),s))
+  def getState[S]: State[S,S] = State(s => (s,s), name = "getState")
+  def setState[S](s: S): State[S,Unit] = State(_ => ((),s), name = "setState")
 
   val F = stateMonad[Int]
 
   def zipWithIndex[A](as: List[A]): List[(Int,A)] = {
     val seed: State[Int, List[(Int, A)]] = F.unit(List[(Int, A)]())
     val zippedListWrappedInState: State[Int, List[(Int, A)]] = as.foldLeft(seed)((acc, a) => acc.flatMap(listIntA => {
-      println(s"in acc flatMap. listIntA is $listIntA")
-      println(s"in acc flatMap. a is $a")
       val newAcc: State[Int, List[(Int, A)]] = getState[Int].flatMap(n => {
-        println(s"in getState flatMap. n is $n")
         val map: State[Int, List[(Int, A)]] = setState[Int](n + 1).map(_ => {
-          println(s"in setState map. n is: $n")
           (n, a) :: listIntA})
         map
       })
