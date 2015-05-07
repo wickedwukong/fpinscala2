@@ -169,16 +169,24 @@ case class State[S, +A](run: S => (A, S), name: String = "State") {
     flatMap(a => unit(f(a)))
   def map2[B,C](sb: State[S, B])(f: (A, B) => C): State[S, C] =
     flatMap(a => sb.map(b => f(a, b)))
-  def flatMap[B](f: A => State[S, B]): State[S, B] = State(s => {
-    println(s"===================$name===============================")
-    println(s"s is: $s")
-    val (a, s1) = run(s)
-    println(s"a is: $a s1 is: $s1")
-    val f1: State[S, B] = f(a)
-    val run1: (B, S) = f1.run(s1)
-    println(s"B is ${run1._1}. S is ${run1._2}")
-    run1
-  })
+  def flatMap[B](f: A => State[S, B]): State[S, B] = {
+    println(s"In [$name] flatMap")
+    val newStateName = s"created by the flatMap of $name"
+    State(s => {
+      println(s"===================Starting [$newStateName] run===============================")
+      println(s"s is: $s")
+      println(s"starting parent $name run")
+      val (a, s1) = run(s)
+      println(s"a is: $a s1 is: $s1")
+      println(s"finished parent $name run")
+      val f1: State[S, B] = f(a)
+      println(s"created state: ${f1.name}")
+      val (bb, ss): (B, S) = f1.run(s1)
+      println(s"bb is $bb. ss is $ss")
+      println(s"===================Finishing [$newStateName] run===============================")
+      (bb, ss)
+    }, s"$newStateName")
+  }
 }
 
 object State {

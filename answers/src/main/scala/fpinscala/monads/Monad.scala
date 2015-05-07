@@ -165,7 +165,8 @@ object Monad {
 
       newAcc
     }))
-
+    println("Going to run the state run")
+    println(s"The name of the final state is: ${zippedListWrappedInState.name}")
     zippedListWrappedInState.run(0)._1.reverse
 //
 //    val left: State[Int, List[(Int, A)]] = as.foldLeft(F.unit(List[(Int, A)]()))((acc, a) => for {
@@ -218,7 +219,7 @@ object Reader {
 }
   object TestStateMonad extends App {
     import Monad._
-    private val index: List[(Int, String)] = zipWithIndex(List("a", "b", "c"))
+    private val index: List[(Int, String)] = zipWithIndex(List("a"))
     print(index)
   }
 
