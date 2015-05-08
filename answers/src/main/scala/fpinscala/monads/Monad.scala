@@ -220,7 +220,7 @@ object Reader {
 
 object TestStateMonad extends App {
     import Monad._
-    private val index: List[(Int, String)] = zipWithIndex(List("a"))
+    private val index: List[(Int, String)] = zipWithIndex(List("a", "b"))
     print(s"Result: $index")
 }
 
