@@ -175,7 +175,7 @@ case class State[S, +A](run: S => (A, S), name: String = "State") {
     State(s => {
       println(s"===================Starting [$newStateName] run===============================")
       println(s"s is: $s")
-      println(s"starting parent $name run")
+      println(s"starting parent [$name] run")
       val (a, s1) = run(s)
       println(s"a is: $a s1 is: $s1")
       println(s"finished parent $name run")
