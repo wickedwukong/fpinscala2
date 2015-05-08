@@ -180,10 +180,10 @@ case class State[S, +A](run: S => (A, S), name: String = "State") {
       println(s"a is: $a s1 is: $s1")
       println(s"finished parent $name run")
       val f1: State[S, B] = f(a)
-      println(s"created state: ${f1.name}")
+      println(s"created new state: ${f1.name}")
       val (bb, ss): (B, S) = f1.run(s1)
       println(s"bb is $bb. ss is $ss")
-      println(s"===================Finishing [$newStateName] run===============================")
+      println(s"===================Finished [$newStateName] run===============================")
       (bb, ss)
     }, s"$newStateName")
   }
