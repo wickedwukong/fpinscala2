@@ -137,9 +137,8 @@ object Monad {
   // an anonymous class inline, inside parentheses, and project out its type member,
   // `lambda`:
   def stateMonad[S] = new Monad[({type lambda[x] = State[S, x]})#lambda] {
-    def unit[A](a: => A): State[S, A] = State(s => (a, s), name = "unitMonad")
-
-    override def flatMap[A, B](st: State[S, A])(f: A => State[S, B]): State[S, B] =
+    def unit[A](a: => A): State[S, A] = State(s => (a, s))
+    override def flatMap[A,B](st: State[S, A])(f: A => State[S, B]): State[S, B] =
       st flatMap f
   }
 
@@ -149,38 +148,17 @@ object Monad {
     override def flatMap[A, B](ida: Id[A])(f: A => Id[B]): Id[B] = ida flatMap f
   }
 
-  def getState[S]: State[S,S] = State(s => (s,s), name = "getState")
-  def setState[S](s: S): State[S,Unit] = State(_ => ((),s), name = "setState")
+  def getState[S]: State[S,S] = State(s => (s,s))
+  def setState[S](s: S): State[S,Unit] = State(_ => ((),s))
 
   val F = stateMonad[Int]
 
-  def zipWithIndex[A](as: List[A]): List[(Int,A)] = {
-    val seed: State[Int, List[(Int, A)]] = F.unit(List[(Int, A)]())
-    val zippedListWrappedInState: State[Int, List[(Int, A)]] = as.foldLeft(seed)((acc, a) => acc.flatMap(listIntA => {
-      val newAcc: State[Int, List[(Int, A)]] = getState[Int].flatMap(n => {
-        val map: State[Int, List[(Int, A)]] = setState[Int](n + 1).map(_ => {
-          (n, a) :: listIntA})
-        map
-      })
-
-      newAcc
-    }))
-    println("Going to run the final state run")
-    println(s"The final state is: ${zippedListWrappedInState.name}")
-    zippedListWrappedInState.run(0)._1.reverse
-//
-//    val left: State[Int, List[(Int, A)]] = as.foldLeft(F.unit(List[(Int, A)]()))((acc, a) => for {
-//      xs <- acc
-//      n <- getState
-//      _ <- setState(n + 1)
-//    } yield (n, a) :: xs)
-//
-//    val run: (List[(Int, A)], Int) = left.run(0)
-//
-//    run._1.reverse
-
-  }
-
+  def zipWithIndex[A](as: List[A]): List[(Int,A)] =
+    as.foldLeft(F.unit(List[(Int, A)]()))((acc,a) => for {
+      xs <- acc
+      n  <- getState
+      _  <- setState(n + 1)
+    } yield (n, a) :: xs).run(0)._1.reverse
 
   // The action of Reader's `flatMap` is to pass the `r` argument along to both the
   // outer Reader and also to the result of `f`, the inner Reader. Similar to how
