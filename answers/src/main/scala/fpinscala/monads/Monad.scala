@@ -137,7 +137,7 @@ object Monad {
   // an anonymous class inline, inside parentheses, and project out its type member,
   // `lambda`:
   def stateMonad[S] = new Monad[({type lambda[x] = State[S, x]})#lambda] {
-    def unit[A](a: => A): State[S, A] = State(s => (a, s), name = "unitMonad")
+    def unit[A](a: => A): State[S, A] = State(s => (a, s), name = "unitState")
 
     override def flatMap[A, B](st: State[S, A])(f: A => State[S, B]): State[S, B] =
       st flatMap f
