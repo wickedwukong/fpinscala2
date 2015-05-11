@@ -202,3 +202,14 @@ object TestStateMonad extends App {
     print(s"Result: $index")
 }
 
+object ZipWithIndexNoMonad extends App {
+
+  def zipWithIndex[A](as: List[A]): List[(Int,A)] = {
+    as.foldLeft((0, List.empty[(Int, A)])){(acc, a) => {
+      (acc._1 + 1, (acc._1, a) :: acc._2)
+    }}
+  }._2.reverse
+
+  val index: List[(Int, String)] = zipWithIndex(List("a", "b"))
+  print(s"ZipWithIndex without using monad. Result: $index")
+}
