@@ -18,7 +18,7 @@ trait Applicative[F[_]] extends Functor[F] {
   def map[A,B](fa: F[A])(f: A => B): F[B] =
     apply(unit(f))(fa)
 
-  def sequence[A](fas: List[F[A]]): F[List[A]] = fas.foldRight(unit(List.empty[A]))((fla, fa) => map2(fla, fa)(_ :: _))
+  def sequence[A](fas: List[F[A]]): F[List[A]] = fas.foldRight(unit(List.empty[A]))((fa, fla) => map2(fa, fla)(_ :: _))
 
   def traverse[A,B](as: List[A])(f: A => F[B]): F[List[B]] = ???
 
