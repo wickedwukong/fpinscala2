@@ -49,7 +49,11 @@ trait Applicative[F[_]] extends Functor[F] {
 
   def compose[G[_]](G: Applicative[G]): Applicative[({type f[x] = F[G[x]]})#f] = ???
 
-  def sequenceMap[K,V](ofa: Map[K,F[V]]): F[Map[K,V]] = ???
+  def sequenceMap[K,V](ofa: Map[K,F[V]]): F[Map[K,V]] = {
+    ofa.foldLeft(unit(Map[K,V]())){case (fMap, (k, fv)) => {
+      map2(fMap, fv)((map, v) => map + (k -> v))
+    } }
+  }
 }
 
 case class Tree[+A](head: A, tail: List[Tree[A]])
